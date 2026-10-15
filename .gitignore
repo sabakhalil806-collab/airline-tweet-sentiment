@@ -1,1 +1,34 @@
 
+# Python cache
+__pycache__/
+*.py[cod]
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Jupyter temporary files
+.ipynb_checkpoints/
+
+# Dataset files
+Tweets.csv
+data/
+datasets/
+
+# Trained model artifacts
+*.joblib
+*.pkl
+*.pt
+*.pth
+*.safetensors
+checkpoints/
+outputs/
+
+# Environment secrets
+.env
+
+# Operating system files
+.DS_Store
+Thumbs.db
+
