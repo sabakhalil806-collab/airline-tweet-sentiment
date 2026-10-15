@@ -1,249 +1,276 @@
 # ✈️ Airline Tweet Sentiment Classifier
 
-> A three-class sentiment classifier (negative / neutral / positive) for airline tweets, comparing a classic TF-IDF + Logistic Regression pipeline with a fine-tuned RoBERTa transformer.
+A three-class NLP project that classifies airline-related tweets as **Negative, Neutral, or Positive**. This project compares a traditional machine-learning pipeline using TF-IDF and Logistic Regression with a fine-tuned RoBERTa transformer.
+
+The goal is to evaluate how classical NLP techniques and transformer-based models handle sentiment classification, especially neutral, mixed, and ambiguous tweets.
 
 ![Python](https://img.shields.io/badge/Python-3.10%2B-blue)
-![scikit-learn](https://img.shields.io/badge/scikit--learn-classic%20ML-orange)
-![Transformers](https://img.shields.io/badge/Hugging%20Face-RoBERTa-yellow)
+![scikit-learn](https://img.shields.io/badge/scikit--learn-Classic%20ML-orange)
+![Hugging Face](https://img.shields.io/badge/Hugging%20Face-RoBERTa-yellow)
+![Gradio](https://img.shields.io/badge/Demo-Gradio-orange)
 ![License](https://img.shields.io/badge/License-MIT-green)
 
-**Result at a glance:** the fine-tuned RoBERTa model reaches **macro F1 0.829** (accuracy 0.868) on the held-out test set, compared with **0.754** (accuracy 0.805) for the best classic model.
+## 📊 Results at a Glance
 
-Task: Intelligent Multi-Class Natural Language Text Sentiment Classifier.
+On the recorded held-out test set of 2,837 tweets, the fine-tuned RoBERTa model achieved a reported Macro F1 of **0.829**, compared with **0.754** for the classic machine-learning model.
 
----
+| Model | Accuracy | Macro F1 |
+|---|---:|---:|
+| Majority-class baseline | 0.639 | 0.260 |
+| TF-IDF + Logistic Regression | 0.805 | 0.754 |
+| Classic ML with tuned class weights | 0.815 | 0.759 |
+| **Fine-tuned RoBERTa** | **0.868** | **0.829** |
 
-## 📌 Overview
+These values are from the notebook's recorded results and have not been independently reproduced in a fresh environment.
 
-This project classifies airline tweets as **negative**, **neutral** or **positive** using the
-[Twitter US Airline Sentiment](https://www.kaggle.com/datasets/crowdflower/twitter-airline-sentiment) dataset.
+## 📌 Project Overview
 
-It compares a classic machine-learning pipeline with a fine-tuned tweet-pretrained transformer
-(`cardiffnlp/twitter-roberta-base-sentiment-latest`) using a careful evaluation setup: cross-validated decisions, a test set used only once, bootstrap confidence intervals, label-quality checks and a structured error analysis.
+Sentiment analysis is a natural language processing task that identifies the emotional polarity expressed in text.
 
----
+This project uses the [Twitter US Airline Sentiment dataset on Kaggle](https://www.kaggle.com/datasets/crowdflower/twitter-airline-sentiment). It contains tweets about US airlines labeled as negative, neutral, or positive.
 
-## ✨ Features
+The project explores two approaches:
 
-* 🧹 Near-duplicate removal **before** the train/test split (no leakage)
-* 🧪 Preprocessing ablation: 7 variants compared with cross-validation
-* 🔤 Word and character n-gram TF-IDF, airline and style features
-* 📊 Repeated cross-validation for 7 model configurations (mean ± std)
-* ⚖️ Neutral-class threshold tuning on out-of-fold predictions
-* 🏷️ Label-quality analysis using annotator confidence
-* 🤖 Fine-tuned RoBERTa transformer with a class-weighted loss
-* 📈 Bootstrap 95 % confidence intervals and paired model comparison
-* 🔍 Structured error analysis with automatic error tags
-* 🖥️ Interactive Gradio demo
+- **Traditional machine learning:** TF-IDF features with Logistic Regression and other classical classifiers.
+- **Transformer-based learning:** Fine-tuning `cardiffnlp/twitter-roberta-base-sentiment-latest` for the three-class task.
 
----
+The notebook also explores preprocessing choices, class imbalance, label quality, model errors, and interactive predictions.
 
-## 🖥️ Demo (Gradio)
+## ✨ Key Features
 
-The notebook ends with an interactive app: type a tweet, choose a model, and see the predicted class with the probability of each class. Below are three tests I ran on the finished app.
+- Text cleaning and near-duplicate analysis
+- Word-level and character-level TF-IDF features
+- Comparison of multiple classical classifiers
+- Cross-validation for model comparison
+- Class-weight and neutral-class threshold experiments
+- Fine-tuning of a pretrained RoBERTa model
+- Accuracy, Macro F1, per-class F1, and confusion-matrix evaluation
+- Bootstrap confidence intervals and model comparison
+- Analysis of noisy labels and common classification errors
+- Interactive Gradio demo
 
-### Test 1: Generalization to a new domain (fine-tuned transformer)
+## 🖥️ Demo
 
-A sentence that is **not about airlines** and has no obvious sentiment keywords; the negativity comes only from the meaning.
+The notebook includes a Gradio interface where users can enter a tweet, select a model, and inspect its predicted sentiment and class scores.
 
-> *"The train was ninety minutes late and the conductor just shrugged when we asked what was going on."*
+### Example 1: Negative sentiment
 
-<img src="docs/demo-1-transformer-negative.png" alt="Fine-tuned transformer predicts Negative with 99% confidence for a train-delay sentence" width="800">
+Tweet:
 
-**Result:** Negative, 99 % confidence. The model transfers beyond airline vocabulary.
+> The train was ninety minutes late and the conductor just shrugged when we asked what was going on.
 
-### Test 2: Neutral question (classic ML)
+![Transformer negative sentiment example](docs/demo-1-transformer-negative.png)
 
-A factual question with no emotion. Neutral is the hardest class in this dataset.
+The recorded demo predicts **Negative** with a displayed confidence of 99%.
 
-> *"@AmericanAir What time does the check-in counter open for flight 221 tomorrow?"*
+### Example 2: Neutral sentiment
 
-<img src="docs/demo-2-classic-neutral.png" alt="Classic ML predicts Neutral with 83% confidence for a check-in question" width="800">
+Tweet:
 
-**Result:** Neutral, 83 % confidence (negative 15 %, positive 2 %).
+> @AmericanAir What time does the check-in counter open for flight 221 tomorrow?
 
-### Test 3: Mixed sentiment (fine-tuned transformer)
+![Classic ML neutral sentiment example](docs/demo-2-classic-neutral.png)
 
-A polite opening followed by the real complaint.
+The recorded demo predicts **Neutral** with a displayed confidence of 83%.
 
-> *"@SouthwestAir The staff were really polite, but my bag was lost and nobody could help."*
+### Example 3: Mixed sentiment
 
-<img src="docs/demo-3-transformer-mixed.png" alt="Fine-tuned transformer predicts Negative with 99% confidence for a mixed-sentiment tweet" width="800">
+Tweet:
 
-**Result:** Negative, 99 % confidence. The model weighs the complaint after "but" over the positive start.
+> @SouthwestAir The staff were really polite, but my bag was lost and nobody could help.
 
-### Summary of the three tests
+![Transformer mixed sentiment example](docs/demo-3-transformer-mixed.png)
 
-| # | Tweet (short) | Model | Expected | Predicted | Confidence |
-|:-:|---|---|:-:|:-:|:-:|
-| 1 | Train 90 minutes late, conductor shrugged | Fine-tuned RoBERTa | Negative | ✅ Negative | 99 % |
-| 2 | What time does check-in open for flight 221? | Classic ML | Neutral | ✅ Neutral | 83 % |
-| 3 | Polite staff, but bag lost and no help | Fine-tuned RoBERTa | Negative | ✅ Negative | 99 % |
+The recorded demo predicts **Negative** with a displayed confidence of 99%.
 
-> Three hand-picked examples are a sanity check, not an evaluation. The real evidence is the test-set results below.
+These are illustrative examples, not a substitute for evaluation on held-out data. Displayed confidence scores should not be interpreted as calibrated probabilities unless calibration has been evaluated.
 
----
+## 📈 Model Evaluation
 
-## 📊 Results (held-out test set, 2,837 tweets)
+The notebook reports the following per-class F1 scores:
 
-| Model | Accuracy | Macro F1 | 95 % CI (bootstrap) |
-|---|:---:|:---:|:---:|
-| Majority-class baseline | 0.639 | 0.260 | 0.255 to 0.264 |
-| Classic ML (Logistic Regression, word + char n-grams) | 0.805 | 0.754 | 0.735 to 0.772 |
-| Classic ML + tuned class weights | 0.815 | 0.759 | 0.740 to 0.777 |
-| **Fine-tuned RoBERTa** | **0.868** | **0.829** | **0.811 to 0.844** |
-
-Per-class F1 on the test set:
-
-| Model | Negative | Neutral | Positive |
-|---|:---:|:---:|:---:|
+| Model | Negative F1 | Neutral F1 | Positive F1 |
+|---|---:|---:|---:|
 | Classic ML | 0.878 | 0.653 | 0.730 |
 | Fine-tuned RoBERTa | 0.923 | 0.729 | 0.834 |
 
-The transformer improves macro F1 by about **+0.075** over the best classic model (paired bootstrap 95 % CI +0.059 to +0.092, significant) and improves all three classes.
+The reported results suggest that RoBERTa improves performance across all three classes, with a particularly useful improvement on neutral sentiment.
 
----
+### Evaluation methods
+
+The notebook includes:
+
+- Stratified train/test splitting
+- Cross-validation for classical model and preprocessing comparisons
+- Macro F1 to account for class imbalance
+- Per-class metrics and confusion matrices
+- Bootstrap confidence intervals
+- Error analysis for misclassified tweets
+
+The notebook documents one held-out split and one fine-tuning run. Repeated transformer runs with different random seeds would provide stronger evidence of the stability of the reported results.
 
 ## 🔍 Key Findings
 
-1. **Preprocessing matters less than expected.** Cleaning plus sentiment signals (`!`, `?`, emoticons) scored best (CV macro F1 0.748). Removing stop-words *lowered* the score, and the baseline pipeline with standard stop-words and lemmatization scored 0.716.
-2. **Character n-grams help.** Logistic Regression improved from 0.749 (word n-grams) to 0.762 (word + character n-grams). Airline and style features added nothing, and Complement Naive Bayes was clearly worse (0.688).
-3. **Tuning and threshold adjustment gave no reliable gain.** GridSearchCV scored below the untuned model, and class-weight tuning moved macro F1 by only +0.005 (confidence intervals overlap).
-4. **Label noise limits the score.** On the 70 % of test tweets with annotator confidence ≥ 0.8, the classic model's macro F1 is **0.847** (vs 0.754 on all tweets). Half of the neutral tweets have low annotator confidence.
-5. **Errors.** The transformer misclassifies 13.2 % of test tweets. The most common error tags are low label confidence (69 % of errors), negation, mixed sentiment and very short tweets. The largest confusions are negative ↔ neutral.
+1. **Preprocessing choices matter.** Removing stop words did not improve the recorded results; retaining sentiment-related signals can be useful for tweets.
+2. **Character n-grams help.** The recorded experiments show an improvement when character-level features are combined with word-level TF-IDF features.
+3. **Classical models provide a strong baseline.** Logistic Regression performs well while remaining relatively lightweight compared with transformer fine-tuning.
+4. **Neutral sentiment is challenging.** Neutral and mixed tweets can be difficult to distinguish, particularly when labels are uncertain.
+5. **Label quality matters.** The notebook's label-confidence analysis suggests that noisy or ambiguous labels contribute to classification errors.
+6. **Transformers perform better in the recorded evaluation.** RoBERTa achieves the highest reported Macro F1 among the compared models.
 
----
+## 🔄 Project Workflow
 
-## 🔄 Workflow
+1. Load the airline sentiment dataset.
+2. Inspect the labels and remove duplicates using the documented text-normalization procedure.
+3. Split the data into training and held-out test sets.
+4. Compare preprocessing variants using cross-validation.
+5. Build word and character TF-IDF features.
+6. Compare classical machine-learning classifiers.
+7. Experiment with class weights and neutral-class thresholds.
+8. Fine-tune the pretrained RoBERTa model.
+9. Evaluate predictions and inspect classification errors.
+10. Run the interactive Gradio demo.
 
-```text
-Twitter US Airline Sentiment (14,640 tweets)
-            │
-            ▼
-Remove near-duplicates  →  14,181 tweets
-            │
-            ▼
-Stratified 80/20 split  (test set locked away)
-            │
-            ▼
-Preprocessing ablation  →  best variant chosen by CV
-            │
-            ▼
-Feature building  →  word + char n-grams, airline, style features
-            │
-            ▼
-Model comparison (repeated CV)  →  Logistic Regression, SVM, Naive Bayes
-            │
-            ├──► Tuning + neutral-class thresholds
-            │
-            ├──► Label-quality analysis
-            │
-            └──► Fine-tuned RoBERTa transformer
-                          │
-                          ▼
-        Final test evaluation (used once, bootstrap CIs)
-                          │
-                          ▼
-        Error analysis  →  Gradio demo
-```
-
----
+**Evaluation note:** For a final unbiased model-selection result, select the winning model using training and validation data, then evaluate that selected model on the held-out test set. Comparisons of multiple models on the test set should be described carefully.
 
 ## 🛠️ Technologies Used
 
 | Technology | Purpose |
 |---|---|
-| **Python** | Main programming language |
-| **scikit-learn** | TF-IDF, Logistic Regression, SVM, cross-validation, tuning |
-| **NLTK** | Stop-words and lemmatization |
-| **Hugging Face Transformers + PyTorch** | Fine-tuning RoBERTa |
-| **pandas / NumPy** | Data handling |
-| **matplotlib / seaborn** | Charts |
-| **Gradio** | Interactive demo |
-| **Kaggle** | Notebook environment and free GPU |
-
----
+| Python | Main programming language |
+| pandas and NumPy | Data manipulation |
+| scikit-learn | TF-IDF, classical models, cross-validation, metrics |
+| NLTK | Stop words and lemmatization |
+| Hugging Face Transformers | RoBERTa fine-tuning |
+| PyTorch | Transformer training and inference |
+| SciPy | Statistical utilities |
+| Matplotlib and Seaborn | Visualizations |
+| Gradio | Interactive interface |
+| Kaggle | Dataset access and notebook execution |
 
 ## 📁 Project Structure
 
 ```text
 airline-tweet-sentiment/
-│
 ├── README.md
 ├── requirements.txt
-├── LICENSE
 ├── .gitignore
-│
-├── notebooks/
-│   └── sentiment-analyzer.ipynb
-│
+├── LICENSE
+├── Notebook/
+│   └── sentiment-analyser.ipynb
 └── docs/
     ├── demo-1-transformer-negative.png
     ├── demo-2-classic-neutral.png
     └── demo-3-transformer-mixed.png
 ```
 
----
+The dataset and trained model artifacts are not required to be stored in the repository. Update the structure above if your actual filenames differ.
 
-## ⚙️ How to Run
+## ⚙️ Installation and Setup
 
-### Option A: Kaggle (recommended, free GPU)
-
-1. Upload `Notebook/sentiment-analyser.ipynb` to Kaggle and add the *Twitter US Airline Sentiment* dataset.
-2. Set **Internet → On**. For the transformer section also set **Accelerator → GPU T4**.
-3. Run all cells from top to bottom. Without a GPU the transformer section is skipped and everything else still runs.
-4. The last code cell launches the Gradio demo; open the `gradio.live` link it prints.
-
-### Option B: Locally
+### 1. Clone the repository
 
 ```bash
 git clone https://github.com/sabakhalil806-collab/airline-tweet-sentiment.git
 cd airline-tweet-sentiment
-pip install -r requirements.txt
-# download Tweets.csv from the Kaggle dataset and place it next to the notebook
-jupyter notebook notebooks/sentiment-analyzer.ipynb
 ```
 
-Transformer fine-tuning needs a CUDA GPU. The classic-ML parts run on CPU, but the repeated cross-validation takes a while.
+### 2. Create a Python environment
 
----
+```bash
+python -m venv .venv
+```
 
-## 📚 Dataset
+Activate the environment:
 
-[Twitter US Airline Sentiment](https://www.kaggle.com/datasets/crowdflower/twitter-airline-sentiment) (14,640 tweets, 2015; 64 % negative, 21 % neutral, 15 % positive).
+**Windows:**
 
-The data is **not included** in this repository. Download it from Kaggle and follow its license terms.
+```bash
+.venv\Scripts\activate
+```
 
----
+**macOS or Linux:**
+
+```bash
+source .venv/bin/activate
+```
+
+### 3. Install dependencies
+
+```bash
+python -m pip install --upgrade pip
+pip install -r requirements.txt
+```
+
+For GPU-based transformer training, install a PyTorch build compatible with your CUDA environment. Refer to the [official PyTorch installation guide](https://pytorch.org/get-started/locally/).
+
+## 📚 Dataset Setup
+
+This project uses the [Twitter US Airline Sentiment dataset](https://www.kaggle.com/datasets/crowdflower/twitter-airline-sentiment).
+
+The dataset is not included in this repository.
+
+1. Download the dataset from Kaggle and locate `Tweets.csv`.
+2. If using Kaggle, add the dataset to your notebook through Kaggle's input feature.
+3. If running locally, place `Tweets.csv` in a location searched by the notebook's dataset-loading code.
+4. Check the dataset path before running the notebook.
+
+The notebook searches for `Tweets.csv` in the current working directory and under `/kaggle/input`. If you store the file elsewhere, update the loader to use that path.
+
+Follow the dataset provider's terms when downloading or redistributing data.
+
+## ▶️ Running the Notebook
+
+### Option A: Kaggle
+
+1. Upload `Notebook/sentiment-analyser.ipynb` to Kaggle.
+2. Attach the airline sentiment dataset.
+3. Enable a GPU accelerator if you want to run transformer fine-tuning.
+4. Run the notebook cells in order.
+5. Follow the notebook's output for the Gradio demo.
+
+Transformer training may be skipped when CUDA is unavailable, depending on the notebook's configuration. Classical machine-learning experiments can run on a CPU, although repeated cross-validation may take some time.
+
+### Option B: Local Jupyter Notebook
+
+After installing dependencies and setting up `Tweets.csv`, run:
+
+```bash
+pip install jupyter
+jupyter notebook
+```
+
+Open `Notebook/sentiment-analyser.ipynb` and execute the cells in order.
+
+The first complete run may take significant time, particularly during cross-validation and transformer fine-tuning.
 
 ## ⚠️ Limitations
 
-* One dataset (US airlines, 2015); results may not transfer to other domains or to current Twitter/X language.
-* Labels are noisy, especially for neutral and mixed tweets, which caps the achievable score.
-* Auto-tags in the error analysis are heuristics; only the manually tagged sample is reliable.
-* Results come from a single split and a single fine-tuning run (one random seed).
-
----
+- The dataset consists of US airline tweets from 2015 and may not represent modern social-media language or other domains.
+- Sentiment labels can be ambiguous, especially for neutral and mixed statements.
+- Heuristic error tags are useful for exploration but are not equivalent to manually verified annotations.
+- The recorded transformer result comes from one fine-tuning run and one random seed.
+- Model scores do not guarantee reliable predictions on unseen domains.
+- Displayed confidence scores are not necessarily calibrated probabilities.
 
 ## 🚀 Future Improvements
 
-* 🤝 Ensemble the classic model and the transformer by averaging their probabilities
-* 🎲 Fine-tune with several seeds, and try a larger model or domain-adaptive pretraining
-* ⚖️ Use annotator confidence as sample weights instead of filtering labels
-* 🧠 Improve handling of negation and sarcasm
-* 🧩 Multi-task learning with `negativereason`, or aspect-based sentiment
-* 🌐 Deploy the demo permanently (for example on Hugging Face Spaces)
-
----
+- Evaluate multiple random seeds for more stable transformer results.
+- Improve separation between model selection and final test evaluation.
+- Evaluate probability calibration.
+- Test on an external dataset to measure cross-domain generalization.
+- Improve handling of negation, sarcasm, and mixed sentiment.
+- Package inference code separately from the training notebook.
+- Deploy a persistent demo, for example using [Hugging Face Spaces](https://huggingface.co/spaces).
+- Explore aspect-based sentiment analysis and airline-specific complaint categories.
 
 ## 📄 License
 
-Released under the [MIT License](LICENSE).
-
----
+This project declares the MIT License. See [`LICENSE`](LICENSE) for details.
 
 ## 👤 Author
 
-**Saba Khalil**, MS AI 25, NUTECH
+**Saba Khalil**  
+MS AI 25, NUTECH
 
-⭐ If you find this project useful, consider giving the repository a **star** on GitHub.
+If you find this project useful, consider giving the repository a star.
