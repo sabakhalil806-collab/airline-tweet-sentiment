@@ -271,6 +271,3 @@ This project declares the MIT License. See [`LICENSE`](LICENSE) for details.
 ## 👤 Author
 
 **Saba Khalil**  
-MS AI 25, NUTECH
-
-If you find this project useful, consider giving the repository a star.
