@@ -189,7 +189,7 @@ airline-tweet-sentiment/
 
 ### Option A: Kaggle (recommended, free GPU)
 
-1. Upload `notebooks/sentiment-analyzer.ipynb` to Kaggle and add the *Twitter US Airline Sentiment* dataset.
+1. Upload `Notebook/sentiment-analyser.ipynb` to Kaggle and add the *Twitter US Airline Sentiment* dataset.
 2. Set **Internet → On**. For the transformer section also set **Accelerator → GPU T4**.
 3. Run all cells from top to bottom. Without a GPU the transformer section is skipped and everything else still runs.
 4. The last code cell launches the Gradio demo; open the `gradio.live` link it prints.
