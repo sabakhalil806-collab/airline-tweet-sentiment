@@ -9,7 +9,7 @@
 
 **Result at a glance:** the fine-tuned RoBERTa model reaches **macro F1 0.829** (accuracy 0.868) on the held-out test set, compared with **0.754** (accuracy 0.805) for the best classic model.
 
-Coursework for **MS AI 25, NUTECH** (Task 2: Intelligent Multi-Class Natural Language Text Sentiment Classifier).
+Task: Intelligent Multi-Class Natural Language Text Sentiment Classifier.
 
 ---
 
@@ -197,7 +197,7 @@ airline-tweet-sentiment/
 ### Option B: Locally
 
 ```bash
-git clone https://github.com/<your-username>/airline-tweet-sentiment.git
+git clone https://github.com/sabakhalil806-collab/airline-tweet-sentiment.git
 cd airline-tweet-sentiment
 pip install -r requirements.txt
 # download Tweets.csv from the Kaggle dataset and place it next to the notebook
