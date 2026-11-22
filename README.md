@@ -264,9 +264,6 @@ The first complete run may take significant time, particularly during cross-vali
 - Deploy a persistent demo, for example using [Hugging Face Spaces](https://huggingface.co/spaces).
 - Explore aspect-based sentiment analysis and airline-specific complaint categories.
 
-## 📄 License
-
-This project declares the MIT License. See [`LICENSE`](LICENSE) for details.
 
 ## 👤 Author
 
